@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Container,
@@ -9,6 +9,7 @@ import {
   CardContent,
   IconButton,
   Button,
+  CircularProgress,
 } from '@mui/material';
 import {
   People,
@@ -18,6 +19,7 @@ import {
   Add as AddIcon,
 } from '@mui/icons-material';
 import { useSelector } from 'react-redux';
+import { getStatistics } from '../../services/statisticsService';
 
 const StatCard = ({ title, value, icon, color }) => (
   <Card
@@ -55,6 +57,61 @@ const StatCard = ({ title, value, icon, color }) => (
 
 const AdminDashboard = () => {
   const { adminEmail } = useSelector((state) => state.admin);
+  const [stats, setStats] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const data = await getStatistics();
+        setStats(data);
+      } catch (err) {
+        setError('Failed to fetch statistics');
+        console.error('Error fetching statistics:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchStats();
+    // Set up real-time updates
+    const interval = setInterval(fetchStats, 30000); // Update every 30 seconds
+
+    return () => clearInterval(interval);
+  }, []);
+
+  if (loading) {
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          minHeight: '100vh',
+          background: 'linear-gradient(135deg, #1E1E1E 0%, #2D2D2D 100%)',
+        }}
+      >
+        <CircularProgress sx={{ color: 'primary.main' }} />
+      </Box>
+    );
+  }
+
+  if (error) {
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          minHeight: '100vh',
+          background: 'linear-gradient(135deg, #1E1E1E 0%, #2D2D2D 100%)',
+        }}
+      >
+        <Typography color="error">{error}</Typography>
+      </Box>
+    );
+  }
 
   return (
     <Box
@@ -78,7 +135,7 @@ const AdminDashboard = () => {
           <Grid item xs={12} sm={6} md={3}>
             <StatCard
               title="Total Users"
-              value="1,234"
+              value={stats?.totalUsers || 0}
               icon={<People />}
               color="#7C4DFF"
             />
@@ -86,7 +143,7 @@ const AdminDashboard = () => {
           <Grid item xs={12} sm={6} md={3}>
             <StatCard
               title="Active Courses"
-              value="56"
+              value={stats?.activeCourses || 0}
               icon={<School />}
               color="#00E5FF"
             />
@@ -94,7 +151,7 @@ const AdminDashboard = () => {
           <Grid item xs={12} sm={6} md={3}>
             <StatCard
               title="Revenue"
-              value="$12,345"
+              value={`$${stats?.totalRevenue || 0}`}
               icon={<Assessment />}
               color="#FF4081"
             />
@@ -102,7 +159,7 @@ const AdminDashboard = () => {
           <Grid item xs={12} sm={6} md={3}>
             <StatCard
               title="Pending Tasks"
-              value="23"
+              value={stats?.pendingTasks || 0}
               icon={<Settings />}
               color="#FFC400"
             />

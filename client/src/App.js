@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useMemo, useState, createContext } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-import theme from './theme';
+import getTheme from './theme';
 
 // Layout Components
 import Navbar from './components/layout/Navbar';
@@ -36,82 +36,95 @@ import UserSettings from './components/user/UserSettings';
 import Home from './pages/Home';
 import Dashboard from './pages/Dashboard';
 
+export const ColorModeContext = createContext({ toggleMode: () => {} });
+
 function App() {
+  const [mode, setMode] = useState('light');
+  const colorMode = useMemo(
+    () => ({
+      toggleMode: () => setMode((prev) => (prev === 'light' ? 'dark' : 'light')),
+    }),
+    []
+  );
+  const theme = useMemo(() => getTheme(mode), [mode]);
+
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <Router>
-        <Navbar />
-        <Routes>
-          {/* Public Routes */}
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/packages" element={<PaymentPackages />} />
+    <ColorModeContext.Provider value={colorMode}>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <Router>
+          <Navbar mode={mode} toggleMode={colorMode.toggleMode} />
+          <Routes>
+            {/* Public Routes */}
+            <Route path="/" element={<Home />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/packages" element={<PaymentPackages />} />
 
-          {/* Admin Routes */}
-          <Route path="/admin/login" element={<AdminLogin />} />
-          <Route
-            path="/admin/dashboard"
-            element={
-              <AdminRoute>
-                <AdminDashboard />
-              </AdminRoute>
-            }
-          />
+            {/* Admin Routes */}
+            <Route path="/admin/login" element={<AdminLogin />} />
+            <Route
+              path="/admin/dashboard"
+              element={
+                <AdminRoute>
+                  <AdminDashboard />
+                </AdminRoute>
+              }
+            />
 
-          {/* Protected User Routes */}
-          <Route
-            path="/dashboard"
-            element={
+            {/* Protected User Routes */}
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="/courses" element={
               <ProtectedRoute>
-                <Dashboard />
+                <CourseList />
               </ProtectedRoute>
-            }
-          />
-          <Route path="/courses" element={
-            <ProtectedRoute>
-              <CourseList />
-            </ProtectedRoute>
-          } />
-          <Route path="/courses/:id" element={
-            <ProtectedRoute>
-              <CourseDetail />
-            </ProtectedRoute>
-          } />
-          <Route path="/generate" element={
-            <ProtectedRoute>
-              <CourseGenerator />
-            </ProtectedRoute>
-          } />
-          <Route path="/profile" element={
-            <ProtectedRoute>
-              <UserProfile />
-            </ProtectedRoute>
-          } />
-          <Route path="/settings" element={
-            <ProtectedRoute>
-              <UserSettings />
-            </ProtectedRoute>
-          } />
+            } />
+            <Route path="/courses/:id" element={
+              <ProtectedRoute>
+                <CourseDetail />
+              </ProtectedRoute>
+            } />
+            <Route path="/generate" element={
+              <ProtectedRoute>
+                <CourseGenerator />
+              </ProtectedRoute>
+            } />
+            <Route path="/profile" element={
+              <ProtectedRoute>
+                <UserProfile />
+              </ProtectedRoute>
+            } />
+            <Route path="/settings" element={
+              <ProtectedRoute>
+                <UserSettings />
+              </ProtectedRoute>
+            } />
 
-          {/* Admin Routes */}
-          <Route path="/admin/courses" element={
-            <AdminRoute>
-              <AdminCourses />
-            </AdminRoute>
-          } />
-          <Route path="/admin/users" element={
-            <AdminRoute>
-              <AdminUsers />
-            </AdminRoute>
-          } />
+            {/* Admin Routes */}
+            <Route path="/admin/courses" element={
+              <AdminRoute>
+                <AdminCourses />
+              </AdminRoute>
+            } />
+            <Route path="/admin/users" element={
+              <AdminRoute>
+                <AdminUsers />
+              </AdminRoute>
+            } />
 
-          {/* Fallback Route */}
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </Router>
-    </ThemeProvider>
+            {/* Fallback Route */}
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </Router>
+      </ThemeProvider>
+    </ColorModeContext.Provider>
   );
 }
 

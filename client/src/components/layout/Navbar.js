@@ -16,8 +16,10 @@ import MenuIcon from '@mui/icons-material/Menu';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../../store/slices/authSlice';
+import Brightness4Icon from '@mui/icons-material/Brightness4';
+import Brightness7Icon from '@mui/icons-material/Brightness7';
 
-const Navbar = () => {
+const Navbar = ({ mode, toggleMode }) => {
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
   const navigate = useNavigate();
@@ -46,6 +48,7 @@ const Navbar = () => {
 
   const pages = [
     { title: 'Courses', path: '/courses' },
+    { title: 'Generate Course', path: '/generate' },
     { title: 'My Learning', path: '/my-learning' },
   ];
 
@@ -147,7 +150,10 @@ const Navbar = () => {
             ))}
           </Box>
 
-          <Box sx={{ flexGrow: 0 }}>
+          <Box sx={{ flexGrow: 0, display: 'flex', alignItems: 'center' }}>
+            <IconButton sx={{ ml: 1 }} onClick={toggleMode} color="inherit">
+              {mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
+            </IconButton>
             {isAuthenticated ? (
               <>
                 <Tooltip title="Open settings">

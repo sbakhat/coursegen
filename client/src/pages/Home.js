@@ -9,6 +9,7 @@ import {
   Card,
   CardContent,
   CardMedia,
+  useTheme,
 } from '@mui/material';
 import {
   School,
@@ -51,84 +52,72 @@ const FeatureCard = ({ icon, title, description }) => (
   </Card>
 );
 
-const Home = () => {
+const HeroSection = () => {
+  const theme = useTheme();
   const navigate = useNavigate();
+  const isDark = theme.palette.mode === 'dark';
 
   return (
     <Box
       sx={{
-        minHeight: '100vh',
-        background: 'linear-gradient(135deg, #1E1E1E 0%, #2D2D2D 100%)',
+        minHeight: '70vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: isDark
+          ? 'linear-gradient(135deg, #23272F 0%, #181A20 100%)'
+          : 'linear-gradient(135deg, #f5f7fa 0%, #e3e6ee 100%)',
+        py: 8,
       }}
     >
-      {/* Hero Section */}
-      <Box
-        sx={{
-          pt: 8,
-          pb: 6,
-          background: 'linear-gradient(45deg, rgba(124, 77, 255, 0.1) 30%, rgba(0, 229, 255, 0.1) 90%)',
-        }}
-      >
-        <Container maxWidth="lg">
-          <Grid container spacing={4} alignItems="center">
-            <Grid item xs={12} md={6}>
-              <Typography
-                variant="h2"
-                component="h1"
-                gutterBottom
-                sx={{
-                  fontWeight: 700,
-                  background: 'linear-gradient(45deg, #7C4DFF 30%, #00E5FF 90%)',
-                  backgroundClip: 'text',
-                  textFillColor: 'transparent',
-                }}
-              >
-                Learn Smarter with AI
-              </Typography>
-              <Typography variant="h5" color="text.secondary" paragraph>
-                Generate personalized courses and accelerate your learning journey with our AI-powered platform.
-              </Typography>
-              <Box sx={{ mt: 4 }}>
-                <Button
-                  variant="contained"
-                  size="large"
-                  onClick={() => navigate('/register')}
-                  sx={{
-                    mr: 2,
-                    mb: 2,
-                    background: 'linear-gradient(45deg, #7C4DFF 30%, #00E5FF 90%)',
-                    '&:hover': {
-                      background: 'linear-gradient(45deg, #6B3FE7 30%, #00CCE5 90%)',
-                    },
-                  }}
-                >
-                  Get Started
-                </Button>
-                <Button
-                  variant="outlined"
-                  size="large"
-                  onClick={() => navigate('/login')}
-                  sx={{ mb: 2 }}
-                >
-                  Sign In
-                </Button>
-              </Box>
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <CardMedia
-                component="img"
-                image="/hero-image.png"
-                alt="AI Learning"
-                sx={{
-                  borderRadius: 4,
-                  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2)',
-                }}
-              />
-            </Grid>
-          </Grid>
-        </Container>
-      </Box>
+      <Container maxWidth="md">
+        <Typography
+          variant="h2"
+          sx={{
+            fontWeight: 700,
+            color: isDark ? 'primary.light' : 'primary.main',
+            mb: 2,
+            textAlign: 'center',
+          }}
+        >
+          AI-Powered Course Generator
+        </Typography>
+        <Typography
+          variant="h5"
+          sx={{
+            color: isDark ? 'text.secondary' : 'text.primary',
+            mb: 4,
+            textAlign: 'center',
+          }}
+        >
+          Instantly create, customize, and manage courses with the power of AI. Switch between light and dark mode for your perfect learning experience.
+        </Typography>
+        <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+          <Button
+            variant="contained"
+            size="large"
+            sx={{
+              px: 5,
+              py: 1.5,
+              fontWeight: 600,
+              fontSize: '1.2rem',
+              background: 'linear-gradient(45deg, #7C4DFF 30%, #00E5FF 90%)',
+              boxShadow: 3,
+            }}
+            onClick={() => navigate('/generate')}
+          >
+            Generate a Course
+          </Button>
+        </Box>
+      </Container>
+    </Box>
+  );
+};
 
+const Home = () => {
+  return (
+    <>
+      <HeroSection />
       {/* Features Section */}
       <Container maxWidth="lg" sx={{ py: 8 }}>
         <Typography
@@ -171,7 +160,7 @@ const Home = () => {
           </Grid>
         </Grid>
       </Container>
-    </Box>
+    </>
   );
 };
 
