@@ -8,6 +8,7 @@ import theme from './theme';
 import Navbar from './components/layout/Navbar';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import AdminRoute from './components/auth/AdminRoute';
+import AdminLogin from './components/admin/AdminLogin';
 
 // Auth Components
 import Login from './components/auth/Login';
@@ -31,6 +32,10 @@ import UserDashboard from './components/user/UserDashboard';
 import UserProfile from './components/user/UserProfile';
 import UserSettings from './components/user/UserSettings';
 
+// Pages
+import Home from './pages/Home';
+import Dashboard from './pages/Dashboard';
+
 function App() {
   return (
     <ThemeProvider theme={theme}>
@@ -39,16 +44,31 @@ function App() {
         <Navbar />
         <Routes>
           {/* Public Routes */}
+          <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/packages" element={<PaymentPackages />} />
 
+          {/* Admin Routes */}
+          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route
+            path="/admin/dashboard"
+            element={
+              <AdminRoute>
+                <AdminDashboard />
+              </AdminRoute>
+            }
+          />
+
           {/* Protected User Routes */}
-          <Route path="/dashboard" element={
-            <ProtectedRoute>
-              <UserDashboard />
-            </ProtectedRoute>
-          } />
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
           <Route path="/courses" element={
             <ProtectedRoute>
               <CourseList />
@@ -76,11 +96,6 @@ function App() {
           } />
 
           {/* Admin Routes */}
-          <Route path="/admin" element={
-            <AdminRoute>
-              <AdminDashboard />
-            </AdminRoute>
-          } />
           <Route path="/admin/courses" element={
             <AdminRoute>
               <AdminCourses />
@@ -92,8 +107,8 @@ function App() {
             </AdminRoute>
           } />
 
-          {/* Default Route */}
-          <Route path="/" element={<Navigate to="/dashboard" replace />} />
+          {/* Fallback Route */}
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Router>
     </ThemeProvider>

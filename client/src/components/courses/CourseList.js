@@ -21,7 +21,7 @@ import { fetchCourses } from '../../store/slices/courseSlice';
 
 const CourseList = () => {
   const dispatch = useDispatch();
-  const { courses, loading } = useSelector((state) => state.courses);
+  const { courses = [], loading } = useSelector((state) => state.courses || {});
   const [searchTerm, setSearchTerm] = useState('');
   const [category, setCategory] = useState('all');
   const [level, setLevel] = useState('all');

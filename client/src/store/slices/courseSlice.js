@@ -5,13 +5,9 @@ const API_URL = 'http://localhost:5000/api';
 
 export const fetchCourses = createAsyncThunk(
   'courses/fetchCourses',
-  async (_, { rejectWithValue }) => {
-    try {
-      const response = await axios.get(`${API_URL}/courses`);
-      return response.data;
-    } catch (error) {
-      return rejectWithValue(error.response.data);
-    }
+  async () => {
+    const response = await axios.get('/api/courses');
+    return response.data;
   }
 );
 
@@ -103,6 +99,7 @@ const courseSlice = createSlice({
     builder
       .addCase(fetchCourses.pending, (state) => {
         state.loading = true;
+        state.error = null;
       })
       .addCase(fetchCourses.fulfilled, (state, action) => {
         state.loading = false;
@@ -110,7 +107,7 @@ const courseSlice = createSlice({
       })
       .addCase(fetchCourses.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload;
+        state.error = action.error.message;
       })
       .addCase(fetchCourseById.pending, (state) => {
         state.loading = true;
